@@ -4,14 +4,15 @@ import (
 	"encoding/base64"
 	"flag"
 	"fmt"
-	"github.com/fatih/color"
-	"github.com/json-iterator/go"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"runtime"
 	"strings"
+
+	"github.com/fatih/color"
+	"github.com/json-iterator/go"
+	"github.com/pkg/errors"
 )
 
 //
@@ -34,9 +35,11 @@ func main() {
 	var addVmess string
 	var port int
 	var showVersion bool
+	var needUpdate bool
 	flag.StringVar(&subUrl, "s", "", "Subscribe URL")
 	flag.StringVar(&addVmess, "a", "", "String starts with 'vmess://...'")
 	flag.IntVar(&port, "p", 1080, "Local port")
+	flag.BoolVar(&needUpdate, "u", false, "Update subscribe URL")
 	flag.BoolVar(&showVersion, "v", false, "Show version")
 	flag.Parse()
 
@@ -62,13 +65,23 @@ func main() {
 	confObj, err := readConfig(GConfigFilePath)
 	if err != nil {
 		//init config
-		confObj.SubURL = subUrl
 		confObj.LocalPort = port
 		confObj.Protocol = "socks"
 		confObj.Index = -1
 	}
 
+	if len(confObj.SubURL) == 0 && len(subUrl) == 0 {
+		eColor.Println("No subscribe URL found.")
+		flag.Usage()
+		return
+	}
+
+	if needUpdate && len(confObj.SubURL) > 0 && len(subUrl) == 0 {
+		subUrl = confObj.SubURL
+	}
+
 	if len(subUrl) != 0 {
+		confObj.SubURL = subUrl
 		err := updateBySubscribeUrl(&confObj, subUrl)
 		if err != nil {
 			eColor.Println(err)
