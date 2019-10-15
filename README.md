@@ -3,7 +3,6 @@ Generate v2ray config file from subscribe url or vmess url
 
 ## Usage
 ```
-dep ensure
 go build
 ./v2rayGen -s http://some.subscribe.url [-a vmess://...] [-p 10801]
 ./v2ray
