@@ -5,6 +5,9 @@
 *.so
 *.dylib
 
+# Binaries in linux and macOS
+v2rayGen
+
 # Test binary, build with `go test -c`
 *.test
 
@@ -23,3 +26,4 @@
 *.tar.gz
 *.zip
 *.json
+go.sum
